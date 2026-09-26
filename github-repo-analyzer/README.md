@@ -1,6 +1,6 @@
 # GitHub Repository Health Analyzer
 
-A small Django web app that takes a public GitHub repository URL and
+A Django web application that takes a public GitHub repository URL and
 generates a **Repository Health Report**: basic repo information, a set of
 simple automated health checks, an overall score out of 100, and a list of
 suggestions for improving the repository.
