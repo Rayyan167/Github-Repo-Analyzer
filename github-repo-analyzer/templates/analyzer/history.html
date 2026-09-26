@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Analysis History{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Analysis History</h1>
+    <p>Previously analyzed repositories.</p>
+</div>
+
+{% if page_obj.object_list %}
+<div class="history-table-wrapper">
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>Repository</th>
+                <th>Score</th>
+                <th>Stars</th>
+                <th>Analyzed On</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for analysis in page_obj.object_list %}
+            <tr>
+                <td>
+                    <a href="{% url 'analyzer:dashboard' analysis.pk %}" class="table-link">{{ analysis.full_name }}</a>
+                </td>
+                <td>
+                    <span class="score-pill {% if analysis.score >= 80 %}score-pill-good{% elif analysis.score >= 50 %}score-pill-medium{% else %}score-pill-low{% endif %}">
+                        {{ analysis.score }}
+                    </span>
+                </td>
+                <td>&#11088; {{ analysis.stars }}</td>
+                <td>{{ analysis.analyzed_at|date:"M d, Y H:i" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if page_obj.has_other_pages %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="page-link">&larr; Previous</a>
+    {% endif %}
+    <span class="page-current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="page-link">Next &rarr;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="empty-state-block">
+    <p>No repositories analyzed yet.</p>
+    <a href="{% url 'analyzer:home' %}" class="btn btn-primary">Analyze a repository</a>
+</div>
+{% endif %}
+{% endblock %}

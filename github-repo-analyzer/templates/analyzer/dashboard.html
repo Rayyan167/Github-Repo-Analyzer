@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ analysis.full_name }} &mdash; Repository Health{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <a href="{% url 'analyzer:home' %}" class="back-link">&larr; Analyze another repository</a>
+    <h1 class="repo-title">
+        <a href="{{ analysis.repo_url }}" target="_blank" rel="noopener noreferrer">{{ analysis.full_name }}</a>
+    </h1>
+    {% if analysis.description %}
+        <p class="repo-description">{{ analysis.description }}</p>
+    {% endif %}
+</div>
+
+<section class="score-section">
+    <div class="score-ring {% if analysis.score >= 80 %}score-good{% elif analysis.score >= 50 %}score-medium{% else %}score-low{% endif %}"
+         style="--score: {{ analysis.score }};">
+        <div class="score-ring-inner">
+            <span class="score-value">{{ analysis.score }}</span>
+            <span class="score-max">/ 100</span>
+        </div>
+    </div>
+    <div class="score-label">
+        <span class="score-heading-tag">Overall Score</span>
+        <h2>Repository Health</h2>
+        <p class="score-description">
+            {% if analysis.score >= 80 %}
+                This repository shows strong signs of good maintenance practices.
+            {% elif analysis.score >= 50 %}
+                This repository has a mix of healthy and improvable indicators.
+            {% else %}
+                This repository is missing several common health indicators.
+            {% endif %}
+        </p>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-icon" aria-hidden="true">&#11088;</span>
+        <span class="stat-value">{{ analysis.stars }}</span>
+        <span class="stat-label">Stars</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon" aria-hidden="true">&#127825;</span>
+        <span class="stat-value">{{ analysis.forks }}</span>
+        <span class="stat-label">Forks</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon" aria-hidden="true">&#128030;</span>
+        <span class="stat-value">{{ analysis.open_issues }}</span>
+        <span class="stat-label">Open Issues</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-icon" aria-hidden="true">&#128187;</span>
+        <span class="stat-value stat-value-text">{{ analysis.language|default:"&mdash;" }}</span>
+        <span class="stat-label">Primary Language</span>
+    </div>
+</section>
+
+<section class="info-panel">
+    <h2 class="section-title">Repository Information</h2>
+    <dl class="info-list">
+        <div class="info-row"><dt>Owner</dt><dd>{{ analysis.owner }}</dd></div>
+        <div class="info-row"><dt>Name</dt><dd>{{ analysis.repo_name }}</dd></div>
+        <div class="info-row"><dt>License</dt><dd>{{ analysis.license_name|default:"None detected" }}</dd></div>
+        <div class="info-row"><dt>Last Updated</dt><dd>{{ analysis.repo_last_updated|date:"M d, Y"|default:"Unknown" }}</dd></div>
+        <div class="info-row"><dt>Recent Commits Checked</dt><dd>{{ analysis.recent_commit_count }}</dd></div>
+        <div class="info-row"><dt>Analyzed On</dt><dd>{{ analysis.analyzed_at|date:"M d, Y H:i" }}</dd></div>
+    </dl>
+</section>
+
+<section class="checks-panel">
+    <h2 class="section-title">Health Checks</h2>
+    <p class="section-note">These are simple, automated indicators &mdash; not a full code quality review.</p>
+    <div class="checks-list">
+        {% for check in analysis.checks %}
+        <div class="check-item check-{{ check.status }}">
+            <span class="check-icon" aria-hidden="true">{{ check.icon }}</span>
+            <div class="check-body">
+                <span class="check-name">{{ check.name }}</span>
+                <span class="check-message">{{ check.message }}</span>
+            </div>
+            <span class="check-badge badge-{{ check.status }}">{{ check.status }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="suggestions-panel">
+    <h2 class="section-title">Suggestions</h2>
+    {% if analysis.suggestions %}
+        <ul class="suggestions-list">
+            {% for suggestion in analysis.suggestions %}
+                <li>{{ suggestion }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="empty-state">No suggestions &mdash; this repository passed all automated checks.</p>
+    {% endif %}
+</section>
+{% endblock %}

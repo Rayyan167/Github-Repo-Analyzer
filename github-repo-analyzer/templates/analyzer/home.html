@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="hero">
+    <h1 class="hero-title">GitHub Repository Health Analyzer</h1>
+    <p class="hero-subtitle">Analyze any public GitHub repository.</p>
+
+    <form method="post" class="analyze-form" id="analyze-form">
+        {% csrf_token %}
+        <div class="input-row">
+            <input
+                type="text"
+                name="repo_url"
+                id="id_repo_url"
+                class="url-input"
+                placeholder="https://github.com/django/django"
+                value="{{ form.repo_url.value|default_if_none:'' }}"
+                required
+            >
+            <button type="submit" class="btn btn-primary" id="analyze-btn">
+                <span class="btn-text">Analyze</span>
+            </button>
+        </div>
+        {% if form.repo_url.errors %}
+            <p class="field-error">{{ form.repo_url.errors.0 }}</p>
+        {% endif %}
+        <p class="form-hint">
+            Try:
+            <button type="button" class="hint-link" data-repo="https://github.com/django/django">django/django</button>
+            &middot;
+            <button type="button" class="hint-link" data-repo="https://github.com/octocat/Hello-World">octocat/Hello-World</button>
+        </p>
+    </form>
+</section>
+
+<section class="how-it-works">
+    <h2 class="section-title">What we check</h2>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <span class="feature-icon" aria-hidden="true">&#128196;</span>
+            <h3>README &amp; Docs</h3>
+            <p>Checks for a README file and additional documentation, like a docs folder or contribution guide.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon" aria-hidden="true">&#129514;</span>
+            <h3>Tests</h3>
+            <p>Looks for a tests folder or test files in the repository root.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon" aria-hidden="true">&#128200;</span>
+            <h3>Activity</h3>
+            <p>Looks at when the repository was last updated to gauge ongoing maintenance.</p>
+        </div>
+        <div class="feature-card">
+            <span class="feature-icon" aria-hidden="true">&#9878;&#65039;</span>
+            <h3>License &amp; Issues</h3>
+            <p>Checks for an open-source license and how many issues are currently open.</p>
+        </div>
+    </div>
+    <p class="disclaimer">
+        These are simple, automated indicators &mdash; not a full code quality review.
+        They're a useful starting point, not a final verdict.
+    </p>
+</section>
+{% endblock %}

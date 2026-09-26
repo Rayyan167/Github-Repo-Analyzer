@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}GitHub Repository Health Analyzer{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'analyzer/css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="{% url 'analyzer:home' %}" class="brand">
+                <span class="brand-icon">&#9670;</span>
+                <span class="brand-name">RepoHealth</span>
+            </a>
+            <nav class="main-nav">
+                <a href="{% url 'analyzer:home' %}" class="nav-link{% if request.resolver_match.url_name == 'home' %} active{% endif %}">Analyze</a>
+                <a href="{% url 'analyzer:history' %}" class="nav-link{% if request.resolver_match.url_name == 'history' %} active{% endif %}">History</a>
+            </nav>
+        </div>
+    </header>
+
+    {% if messages %}
+        <div class="container">
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <main class="site-main">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-inner">
+            <p>GitHub Repository Health Analyzer &mdash; a portfolio project. Not affiliated with GitHub.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'analyzer/js/main.js' %}"></script>
+</body>
+</html>
